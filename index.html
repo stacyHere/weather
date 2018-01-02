@@ -93,7 +93,7 @@ var desc;
 var temp;
 var humidity;
 var icon;
-var api = 'http://api.openweathermap.org/data/2.5/weather?';
+var api = 'https://api.openweathermap.org/data/2.5/weather?';
 var apiKey = "&APPID=c80466223184c39a773df8dd5b4d1c81";
 //var apiKey = "ad6b1b14ad1e3ac7";
 var units = "&units=imperial";
@@ -102,7 +102,7 @@ var zip;
 var url = api + zip + apiKey + units;
 
 function getLocation() {
-  $.getJSON("http://ipinfo.io", function(response) {
+  $.getJSON("https://ipinfo.io", function(response) {
     var loc = response.loc.replace(',', ' ').split(' ');
     $("#geo").text("According to your IP address: " + response.ip + " the weather for your location: " + response.city);
     var urlIP = api + '&lat=' + loc[0] + '&lon=' + loc[1] + apiKey + units;
@@ -137,12 +137,12 @@ $("#zipIn").keypress(function(e) { //search on enter
   btnSubmit();
   }
 }); //end keypress
-var weatherAPI = "http://api.openweathermap.org/data/2.5/weather?lat=41.103998399999995&lon=-81.9371031&APPID=c80466223184c39a773df8dd5b4d1c81&mode=json&units=metric";
+var weatherAPI = "https://api.openweathermap.org/data/2.5/weather?lat=41.103998399999995&lon=-81.9371031&APPID=c80466223184c39a773df8dd5b4d1c81&mode=json&units=metric";
 
 function loadWeather(temp, humidity, icon, n) {
   var iconS = icon;
   var city = n;
-  $("#icon").attr('src', "http://openweathermap.org/img/w/" + iconS + '.png');
+  $("#icon").attr('src', "https://openweathermap.org/img/w/" + iconS + '.png');
   temp = temp + ' \u00B0F';
   $("#units").text(temp);
   $("#desc").text(desc);
