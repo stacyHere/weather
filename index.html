@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+  body {
+background-color: #b5a397;
+color: #30231d;
+text-align: center;
+}
+
+.in {
+border: 5px solid #6a5750;
+color: #f6f1ed;
+background-color: #30231d;
+margin: auto;
+}
+
+.inlineB {
+display: inline-block;
+margin: auto;
+}
+
+a {
+font-size: 2.5em;
+text-decoration: none;
+color: #f6f1ed;
+}
+
+#zipIn {
+color: #f6f1ed;
+background-color: #6a5750;
+margin: 3px auto 3px auto;
+border:2px solid #b5a397;
+}
+
+#btn {
+color: #f6f1ed;
+background-color: #6a5750;
+margin: 3px auto 3px auto;
+border:2px solid #b5a397;
+}
+
+#wrapper {
+border: 5px solid #30231d;
+color: #f6f1ed;
+background-color: #6a5750;
+margin: auto;
+width: 45%;
+}
+
+#weather {
+color: #f6f1ed;
+background-color: #30231d;
+border: 2px solid #b5a397;
+width: 80%;
+margin: auto;
+margin-bottom:25px;
+}
+  </style>
+</head>
+<body>
+  <p id="geo">getting ip info</p>
+<p>Enter another zip code below to see weather in a different location.</p>
+<div id="wrapper">
+  <input class="in" id="zipIn" placeholder="Zip Code" value=""/>
+  <button class="in" id="btn" onclick="btnSubmit()">Submit</button>
+
+  <div id="weather">
+    <h1>Weather for <span id="city"></span></h1>
+    <div>
+      <img class="inlineB" id="icon"/>
+      <h2 class="inlineB"></h2>
+      <a id="units" href="#" class="far inlineB"></a>
+    </div>
+    <h2 id="desc">desc</h2>
+    <h3 id="hum"></h3>
+  </div>
+</div>
+<script
+			  src="https://code.jquery.com/jquery-3.2.1.min.js"
+			  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+			  crossorigin="anonymous"></script>
+        <script>
+  $(document).ready(function() {
+  getLocation();
+});
+var cel;
+var desc;
+var temp;
+var humidity;
+var icon;
+var api = 'http://api.openweathermap.org/data/2.5/weather?';
+var apiKey = "&APPID=c80466223184c39a773df8dd5b4d1c81";
+//var apiKey = "ad6b1b14ad1e3ac7";
+var units = "&units=imperial";
+var name;
+var zip;
+var url = api + zip + apiKey + units;
+
+function getLocation() {
+  $.getJSON("http://ipinfo.io", function(response) {
+    var loc = response.loc.replace(',', ' ').split(' ');
+    $("#geo").text("According to your IP address: " + response.ip + " the weather for your location: " + response.city);
+    var urlIP = api + '&lat=' + loc[0] + '&lon=' + loc[1] + apiKey + units;
+    getWeather(urlIP);
+    loadWeather(loc[0], loc[1]);
+    console.log(loc, response.ip, response.country, response.loc);
+  });
+}
+
+function getWeather(url) {
+  $.getJSON(url, function(weather) {
+    temp = Math.round(weather.main.temp);
+    humidity = weather.main.humidity;
+    icon = weather.weather[0].icon;
+    console.log(url);
+    name = weather.name;
+    var country = weather.sys.country;
+    desc = weather.weather[0].description;
+    console.log(name);
+    loadWeather(temp, humidity, icon, desc, name);
+    $("#city").text(name + ", " + country);
+  });
+}
+$("#btn").click(btnSubmit);
+function btnSubmit() {
+  zip = document.getElementById('zipIn').value;
+  var urlSubmit = api + "&zip=" + zip + ",us" + apiKey + units;
+  getWeather(urlSubmit);
+};
+$("#zipIn").keypress(function(e) { //search on enter
+  if (e.which === 13) {
+  btnSubmit();
+  }
+}); //end keypress
+var weatherAPI = "http://api.openweathermap.org/data/2.5/weather?lat=41.103998399999995&lon=-81.9371031&APPID=c80466223184c39a773df8dd5b4d1c81&mode=json&units=metric";
+
+function loadWeather(temp, humidity, icon, n) {
+  var iconS = icon;
+  var city = n;
+  $("#icon").attr('src', "http://openweathermap.org/img/w/" + iconS + '.png');
+  temp = temp + ' \u00B0F';
+  $("#units").text(temp);
+  $("#desc").text(desc);
+  $("#hum").text("Humidity: " + humidity + "%");
+}
+$("#units").click(function() {
+  $(this).toggleClass("far");
+  convert(this);
+})
+
+function convert(u) {
+  if ($("#units").hasClass("far")) {
+    var tempF = temp + ' \u00B0F';
+    $("#units").text(tempF);
+  } else {
+
+    cel = Math.round((temp - 32) * (5 / 9));
+    var celC = cel + ' \u00B0C';
+    $("#units").text(celC);
+  };
+}
+</script>
+</body>
+</html>
